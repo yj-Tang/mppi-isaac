@@ -97,7 +97,7 @@ def run_boxer_robot(cfg: ExampleConfig):
             "name": "obst_1",
             "size": obst_1_dim,
             "init_pos": obst_1_pos,
-            "fixed": True,
+            "fixed": False,
             "color": [255 / 255, 120 / 255, 57 / 255],
             "handle": None,
         },
