@@ -71,12 +71,12 @@ def run_boxer_robot(cfg: ExampleConfig):
     
     obj_ = obj_set[obj_index][:]
 
-    obst_1_dim = [0.6, 0.8, 0.108]
+    obst_1_dim = [0.6, 5.8, 0.108]
     obst_1_pos = [1, 1, obst_1_dim[-1]/2]
 
-    obst_2_dim = [0.6, 0.8, 0.108]
+    obst_2_dim = [0.6, 5.8, 0.108]
     obst_2_pos = [-1, 1, obst_2_dim[-1]/2]
-    goal_pos = [0. , 0.]
+    goal_pos = [1 , -3.8]
     additions = [
         {
             "type": "box",
@@ -101,26 +101,26 @@ def run_boxer_robot(cfg: ExampleConfig):
             "color": [255 / 255, 120 / 255, 57 / 255],
             "handle": None,
         },
-        {
-            "type": "box",
-            "name": "obst_2",
-            "size": obst_2_dim,
-            "init_pos": obst_2_pos,
-            "fixed": True,
-            "color": [255 / 255, 120 / 255, 57 / 255],
-            "handle": None,
-        },
+        # {
+        #     "type": "box",
+        #     "name": "obst_2",
+        #     "size": obst_2_dim,
+        #     "init_pos": obst_2_pos,
+        #     "fixed": True,
+        #     "color": [255 / 255, 120 / 255, 57 / 255],
+        #     "handle": None,
+        # },
         # Add goal, 
-        {
-            "type": "box",
-            "name": "goal",
-            "size": [obj_[0], obj_[1], obj_[2]],
-            "init_pos": [goal_pos[0], goal_pos[1], -obj_[2]/2 + 0.005],
-            "fixed": True,
-            "color": [119 / 255, 221 / 255, 119 / 255],
-            "handle": None,
-            "collision": False,
-        }
+        # {
+        #     "type": "box",
+        #     "name": "goal",
+        #     "size": [obj_[0], obj_[1], obj_[2]],
+        #     "init_pos": [goal_pos[0], goal_pos[1], -obj_[2]/2 + 0.005],
+        #     "fixed": True,
+        #     "color": [119 / 255, 221 / 255, 119 / 255],
+        #     "handle": None,
+        #     "collision": False,
+        # }
     ]
 
     sim.add_to_envs(additions)
@@ -167,6 +167,44 @@ def run_boxer_robot(cfg: ExampleConfig):
 
         # Step simulator
         sim.step()
+
+        print("time.time() - t:", time.time() - t)
+
+        if time.time() - t > 0:
+            crate_state = torch.tensor(
+                [
+                    -1, 2, obst_1_dim[-1]/2,
+                    0.,
+                    0.,
+                    0.,
+                    1.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                ],
+                device="cuda:0",
+            )
+
+            trash_state = torch.tensor(
+                [
+                    1.5, 0, obst_1_dim[-1]/2,
+                    0.,
+                    0.,
+                    0.,
+                    1.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                    0.,
+                ],
+                device="cuda:0",
+            )
+            sim.update_root_state_tensor_by_obstacles_tensor([crate_state, trash_state])
 
         # Monitoring
         # Evaluation metrics 

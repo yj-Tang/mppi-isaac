@@ -15,7 +15,7 @@ class Objective(object):
         self.w_block_to_goal_pos=   2
         self.w_block_to_goal_ort=   3
         self.w_push_align=          0.6
-        self.w_collision=           100
+        self.w_collision=           5
        
         # Task configration for comparison with baselines
         self.ee_index = 7
