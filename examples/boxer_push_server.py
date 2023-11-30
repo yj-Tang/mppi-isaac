@@ -87,10 +87,11 @@ def run_boxer_robot(cfg: ExampleConfig):
             "mass": 0.80,
             "handle": None,
             "color": [0.2, 0.2, 1.0],
-            "friction": 0.05,
+            "friction": 0.03,
             "noise_sigma_size": [0.020, 0.020, 0.0],
             "noise_percentage_friction": 0.3,
             "noise_percentage_mass": 0.1,
+            "init_pos": [3.1825, 1.9, 0.],
             },
         {
             "type": "box", 
@@ -202,7 +203,7 @@ def run_boxer_robot(cfg: ExampleConfig):
     sim.add_to_envs(additions)
 
     # reset robot position
-    pos_r = np.array([-1.9, 5., 0])
+    pos_r = np.array([2.4, 1.25, 0])
     vel_r = np.array([0., 0., 0.])
     sim.reset_robot_state(pos_r, vel_r)
 
