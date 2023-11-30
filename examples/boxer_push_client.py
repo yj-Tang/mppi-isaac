@@ -11,11 +11,11 @@ class Objective(object):
     def __init__(self, cfg, device):
         
         # Tuning of the weights for baseline 2
-        self.w_robot_to_block_pos=  .1
+        self.w_robot_to_block_pos=  0.01
         self.w_block_to_goal_pos=   2
         self.w_block_to_goal_ort=   3
         self.w_push_align=          0.6
-        self.w_collision=           5
+        self.w_collision=           15
        
         # Task configration for comparison with baselines
         self.ee_index = 7
@@ -23,7 +23,7 @@ class Objective(object):
         self.ort_goal_euler = torch.tensor([0, 0, 0], device=cfg.mppi.device)
         self.ee_hover_height = 0.14
 
-        self.block_goal_pose_0 = torch.tensor([0., 0., 0.5, 0.0, 0.0, 0.0, 1.0], device=cfg.mppi.device)
+        self.block_goal_pose_0 = torch.tensor([-0.9, 6, 0.5, 0.0, 0.0, 0.0, 1.0], device=cfg.mppi.device)
         self.block_goal_pose_1 = torch.tensor([0., 0., 0.5, 0, 0, -0.7071068, 0.7071068], device=cfg.mppi.device) # Rotation 90 deg
 
         # Select goal according to test
@@ -35,7 +35,7 @@ class Objective(object):
         self.count = 0
 
         # Number of obstacles
-        self.obst_number = 3        # By convention, obstacles are the last actors
+        self.obst_number = 1        # By convention, obstacles are the last actors
 
     def compute_metrics(self, block_pos, block_ort):
 
@@ -77,8 +77,7 @@ class Objective(object):
             + self.w_block_to_goal_ort * block_to_goal_ort
             + self.w_push_align * push_align
             + self.w_collision * coll
-        )
-
+        )                                          
         return total_cost
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config_boxer_push")

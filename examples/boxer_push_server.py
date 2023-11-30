@@ -60,7 +60,7 @@ def run_boxer_robot(cfg: ExampleConfig):
     # Manually add table + block and restart isaacgym
     obj_index = 0
                 #  l      w     h     mu      m     x    y
-    obj_set =  [[0.300, 0.500, 0.3,  0.300, 1.000, 2.00, 2.0],     # Crate
+    obj_set =  [[0.400, 0.300, 0.3,  0.300, 1.000, -0.90, 5.0],     # Crate
                 [0.100, 0.100, 0.05, 0.300, 0.100, 2.00, 2.0],     # Baseline 1, pose 1
                 [0.100, 0.100, 0.05, 0.300, 0.100, 0.40, 0.0],     # Baseline 1, pose 2
                 [0.116, 0.116, 0.06, 0.637, 0.016, 0.35, 0.0],     # Baseline 2, A
@@ -71,12 +71,12 @@ def run_boxer_robot(cfg: ExampleConfig):
     
     obj_ = obj_set[obj_index][:]
 
-    obst_1_dim = [0.6, 5.8, 0.108]
-    obst_1_pos = [1, 1, obst_1_dim[-1]/2]
+    obst_1_dim = [1.5, 3.78, 0.108]
+    obst_1_pos = [0, 5.045, obst_1_dim[-1]/2]
 
     obst_2_dim = [0.6, 5.8, 0.108]
     obst_2_pos = [-1, 1, obst_2_dim[-1]/2]
-    goal_pos = [1 , -3.8]
+    goal_pos = [-0.9, 6]
     additions = [
         {
             "type": "box",
@@ -97,7 +97,7 @@ def run_boxer_robot(cfg: ExampleConfig):
             "name": "obst_1",
             "size": obst_1_dim,
             "init_pos": obst_1_pos,
-            "fixed": False,
+            "fixed": True,
             "color": [255 / 255, 120 / 255, 57 / 255],
             "handle": None,
         },
@@ -111,19 +111,24 @@ def run_boxer_robot(cfg: ExampleConfig):
         #     "handle": None,
         # },
         # Add goal, 
-        # {
-        #     "type": "box",
-        #     "name": "goal",
-        #     "size": [obj_[0], obj_[1], obj_[2]],
-        #     "init_pos": [goal_pos[0], goal_pos[1], -obj_[2]/2 + 0.005],
-        #     "fixed": True,
-        #     "color": [119 / 255, 221 / 255, 119 / 255],
-        #     "handle": None,
-        #     "collision": False,
-        # }
+        {
+            "type": "box",
+            "name": "goal",
+            "size": [obj_[0], obj_[1], obj_[2]],
+            "init_pos": [goal_pos[0], goal_pos[1], -obj_[2]/2 + 0.005],
+            "fixed": True,
+            "color": [119 / 255, 221 / 255, 119 / 255],
+            "handle": None,
+            "collision": False,
+        }
     ]
 
     sim.add_to_envs(additions)
+
+    # reset robot position
+    pos_r = np.array([-1.9, 5., 0])
+    vel_r = np.array([0., 0., 0.])
+    sim.reset_robot_state(pos_r, vel_r)
 
     planner = zerorpc.Client()
     planner.connect("tcp://127.0.0.1:4242")
@@ -167,44 +172,6 @@ def run_boxer_robot(cfg: ExampleConfig):
 
         # Step simulator
         sim.step()
-
-        print("time.time() - t:", time.time() - t)
-
-        if time.time() - t > 0:
-            crate_state = torch.tensor(
-                [
-                    -1, 2, obst_1_dim[-1]/2,
-                    0.,
-                    0.,
-                    0.,
-                    1.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                ],
-                device="cuda:0",
-            )
-
-            trash_state = torch.tensor(
-                [
-                    1.5, 0, obst_1_dim[-1]/2,
-                    0.,
-                    0.,
-                    0.,
-                    1.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                    0.,
-                ],
-                device="cuda:0",
-            )
-            sim.update_root_state_tensor_by_obstacles_tensor([crate_state, trash_state])
 
         # Monitoring
         # Evaluation metrics 
