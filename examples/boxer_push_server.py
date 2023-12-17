@@ -35,7 +35,7 @@ def reset_trial(sim, init_pos, init_vel):
 
 def set_viewer(sim):
     sim.gym.viewer_camera_look_at(
-        sim.viewer, None, gymapi.Vec3(1., 6.5, 4), gymapi.Vec3(1., 0, 0)        # CAMERA LOCATION, CAMERA POINT OF INTEREST
+        sim.viewer, None, gymapi.Vec3(10, 0, 4), gymapi.Vec3(0., 0, 1)        # CAMERA LOCATION, CAMERA POINT OF INTEREST
     )
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config_boxer_push")
@@ -88,10 +88,11 @@ def run_boxer_robot(cfg: ExampleConfig):
             "handle": None,
             "color": [0.2, 0.2, 1.0],
             "friction": 0.03,
+            "torsion_friction": 0.00000001,
             "noise_sigma_size": [0.020, 0.020, 0.0],
             "noise_percentage_friction": 0.3,
             "noise_percentage_mass": 0.1,
-            "init_pos": [3.1825, 1.9, 0.],
+            "init_pos": [3.1825, 2.1, 0.],
             },
         {
             "type": "box", 
@@ -203,7 +204,7 @@ def run_boxer_robot(cfg: ExampleConfig):
     sim.add_to_envs(additions)
 
     # reset robot position
-    pos_r = np.array([2.4, 1.25, 0])
+    pos_r = np.array([5.608, 1.385, np.pi/2])
     vel_r = np.array([0., 0., 0.])
     sim.reset_robot_state(pos_r, vel_r)
 
